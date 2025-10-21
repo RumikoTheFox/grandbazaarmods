@@ -44,6 +44,7 @@ public class Plugin : BasePlugin
     private static ConfigEntry<bool> AllowSkyJewel;
     private static ConfigEntry<bool> AllowMatsutake;
     private static ConfigEntry<bool> UpgradeCrops;
+    private static ConfigEntry<bool> CheaperSprinker;
     internal static new ManualLogSource Log;
 
     public override void Load()
@@ -75,9 +76,9 @@ public class Plugin : BasePlugin
             "Set the Blue Wonderstone's crafting time multiplier. Lower number means faster. Game Default: 0.5");
         AllRecipes = Config.Bind("--------02 ALL RECIPES--------", "All Recipes Enabled", false,
             "Set to true to unlock all recipes in all windmills.");
-        ModifiedWindscreen = Config.Bind("--------03 WINDSCREEN COST--------", "Cheaper Windscreen Recipe", false,
+        ModifiedWindscreen = Config.Bind("--------03 MODIFIED RECIPE COSTS--------", "Cheaper Windscreen Recipe", false,
             "Set to true to enable cheaper Windscreen Kit crafting.");
-        WindscreenCost = Config.Bind("--------03 WINDSCREEN COST--------", "Windscreen Material Cost", 5,
+        WindscreenCost = Config.Bind("--------03 MODIFIED RECIPE COSTS--------", "Windscreen Material Cost", 5,
             "Set to the amount each of wood and rocks you want the Windscreen Kit to cost.");
         ModifiedMaterials = Config.Bind("--------04 LUMBER/STONE COST--------", "Modified Material Recipes", false,
             "Set to true to enable modified Lumber/Stone crafting.");
@@ -93,12 +94,12 @@ public class Plugin : BasePlugin
             "Set the amount of wood required for this recipe. Balanced: 25. Half Cost: 12.");
         ForUltimateLumber = Config.Bind("--------04 LUMBER/STONE COST--------", "Ultimate Lumber Cost", 125,
             "Set the amount of wood required for this recipe. Balanced: 125. Half Cost: 60.");
-        CheaperRecipesToggle = Config.Bind("--------05 CHEAPER RECIPES--------", "All Crafting Cheap", false,
+        CheaperRecipesToggle = Config.Bind("--------05 ALL RECIPES CHEAP--------", "All Crafting Cheap", false,
             "Set to true to make all windmill crafting cost a single item. CAUTION: THIS WILL OVERWRITE\n" +
-            "CHEAPER LUMBER/STONE AND CHEAPER WINDSCREEN KIT!!!!");
-        UpgradeCrops = Config.Bind("--------05 CHEAPER RECIPES--------", "Exclude Crops", true,
+            "ANY RECIPE CHANGES FROM THE MODIFIED RECIPE COSTS SECTION!!!!");
+        UpgradeCrops = Config.Bind("--------05 ALL RECIPES CHEAP--------", "Exclude Crops", true,
             "Set to false if you want crops to also be made cheap. Set to true if you want to still be able to use seed bags to increase crop quality.");
-        CheaperRecipeItem = Config.Bind("--------05 CHEAPER RECIPES--------", "Material Item", 110500,
+        CheaperRecipeItem = Config.Bind("--------05 ALL RECIPES CHEAP--------", "Material Item", 110500,
             "Set this to the ID for the item you want all windmill recipes to cost. Set to 110500, Weed, by default.\n" +
             "Check the IDs at https://docs.google.com/spreadsheets/d/1nvusDeTcFZhyxqV6h8OEBClQtV6VNtMd2WrpcxHMbaE/edit?usp=sharing for\n" +
             "Item IDs if you want to use a different item. Another good candidate is rocks (id 110000).");
@@ -111,6 +112,8 @@ public class Plugin : BasePlugin
             "Set to true to show all hidden recipes without a Purple Wonderstone.");
         AllowSkyJewel = Config.Bind("--------01 NEW RECIPES--------", "Add Sky Jewel Recipe", true, "Adds a recipe to the third Windmill for the Sky Jewel. Requires a purple wonderstone by default. Various settings from this mod, such as instant craft, easy materials, and adding all recipes to all windmills still work with this recipe.");
         AllowMatsutake = Config.Bind("--------01 NEW RECIPES--------", "Add Second Matsutake Mushroom Spores Recipe", true, "Adds an extra recipe to the second Windmill for Matsutake Mushroom Spores, using alternate materials. Various settings from this mod, such as instant craft, easy materials, and adding all recipes to all windmills still work with this recipe.");
+        CheaperSprinker = Config.Bind("--------03 MODIFIED RECIPE COSTS--------", "Cheaper Sprinkler Recipe", false,
+            "Removes the gold and silver costs from the Sprinkler.");
         
         Log = base.Log;
         Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
@@ -119,9 +122,36 @@ public class Plugin : BasePlugin
         Harmony.CreateAndPatchAll(typeof(GameSettingStuff));
         Harmony.CreateAndPatchAll(typeof(WindmillPatch));
         Harmony.CreateAndPatchAll(typeof(WindscreenRecipe));
+        Harmony.CreateAndPatchAll(typeof(CheaperSprinkler));
         Harmony.CreateAndPatchAll(typeof(MaterialRecipes));
         Harmony.CreateAndPatchAll(typeof(AllRecipesCheaper));
         Harmony.CreateAndPatchAll(typeof(CraftTimeAndHidden));
+    }
+
+    private static class CheaperSprinkler
+    {
+        [HarmonyPatch(typeof(UITitleMainPage), "PlayTitleLogoAnimation")]
+        [HarmonyPostfix]
+        private static void MakeCheaperSprinkler()
+        {
+            if (CheaperRecipesToggle.Value || !CheaperSprinker.Value) return;
+            var windCraftData = MasterDataManager.Instance.WindmillCraftingMasterData;
+
+            var sprinklerRecipe = windCraftData.Find((Predicate<WindmillCraftingMasterData>)
+                (x => x.CraftingItemId == 121700));
+
+            sprinklerRecipe.RequiredItemId[0] = 112101;
+            sprinklerRecipe.RequiredItemStack[0] = 20;
+            
+            sprinklerRecipe.RequiredItemId[1] = 112100;
+            sprinklerRecipe.RequiredItemStack[1] = 30;
+                
+            sprinklerRecipe.RequiredItemId[2] = 0;
+            sprinklerRecipe.RequiredItemStack[2] = 0;
+            
+            sprinklerRecipe.RequiredItemId[3] = 0;
+            sprinklerRecipe.RequiredItemStack[3] = 0;
+        }
     }
 
     private static class AddSkyJewel
