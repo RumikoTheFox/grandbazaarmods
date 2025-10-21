@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
@@ -116,111 +116,134 @@ public class Plugin : BasePlugin
         {
             var allowedValues = new HashSet<string> { "Default", "SmallWeights", "MediumWeights", "LargeWeights" };
             if (!allowedValues.Contains(WeightsType.Value)) return;
-            
+
             var love = MasterDataManager.Instance.CharacterMaster.list;
 
-            if (WeightsType.Value == "Default")
+            foreach (var character in love)
             {
-                foreach (var likelove in love)
+                float rate = 1f; // Default fallback
+
+                switch (WeightsType.Value)
                 {
-                    likelove.LikeAbilityRate = 1f;
+                    case "Default":
+                        rate = 1f;
+                        break;
+
+                    case "SmallWeights":
+                        switch (character.Id)
+                        {
+                            case 100: rate = 1f; break; // Jules
+                            case 101: rate = 1.1f; break; // Derek
+                            case 102: rate = 0.9f; break; // Lloyd
+                            case 103: rate = 1f; break; // Gabriel
+                            case 104: rate = 0.9f; break; // Samir
+                            case 105: rate = 1.1f; break; // Arata
+                            case 200: rate = 1.1f; break; // Sophie
+                            case 201: rate = 0.9f; break; // June
+                            case 202: rate = 1f; break; // Freya
+                            case 203: rate = 1.1f; break; // Maple
+                            case 204: rate = 1f; break; // Kagetsu
+                            case 205: rate = 0.9f; break; // Diana
+                            case 700: // Child
+                            case 701: // Child
+                            case 702: // Child
+                            case 703: rate = 1.1f; break; // Child
+                            case 400: rate = 1.1f; break; // Felix
+                            case 401: rate = 1f; break; // Erik
+                            case 402: rate = 1f; break; // Stuart
+                            case 403: rate = 1f; break; // Sonia
+                            case 404: rate = 1f; break; // Madeleine
+                            case 405: rate = 1f; break; // Mina
+                            case 406: rate = 1f; break; // Wilbur
+                            case 407: rate = 1f; break; // Clara
+                            case 408: rate = 1f; break; // Kevin
+                            case 409: rate = 1f; break; // Isaac
+                            case 410: rate = 1f; break; // Nadine
+                            case 411: rate = 0.9f; break; // Sylvia
+                            case 412: rate = 1f; break; // Laurie
+                            case 413: rate = 0.9f; break; // Miguel
+                            case 414: rate = 1f; break; // Harold
+                            case 415: rate = 1.1f; break; // Sherene
+                        }
+                        break;
+
+                    case "MediumWeights":
+                        switch (character.Id)
+                        {
+                            case 100: rate = 1f; break; // Jules
+                            case 101: rate = 1.25f; break; // Derek
+                            case 102: rate = 0.75f; break; // Lloyd
+                            case 103: rate = 1f; break; // Gabriel
+                            case 104: rate = 0.75f; break; // Samir
+                            case 105: rate = 1.25f; break; // Arata
+                            case 200: rate = 1.25f; break; // Sophie
+                            case 201: rate = 0.75f; break; // June
+                            case 202: rate = 1f; break; // Freya
+                            case 203: rate = 1.25f; break; // Maple
+                            case 204: rate = 1f; break; // Kagetsu
+                            case 205: rate = 0.75f; break; // Diana
+                            case 700: // Child
+                            case 701: // Child
+                            case 702: // Child
+                            case 703: rate = 1.25f; break; // Child
+                            case 400: rate = 1.25f; break; // Felix
+                            case 401: rate = 1f; break; // Erik
+                            case 402: rate = 1f; break; // Stuart
+                            case 403: rate = 1f; break; // Sonia
+                            case 404: rate = 1f; break; // Madeleine
+                            case 405: rate = 1f; break; // Mina
+                            case 406: rate = 1f; break; // Wilbur
+                            case 407: rate = 1f; break; // Clara
+                            case 408: rate = 1f; break; // Kevin
+                            case 409: rate = 1f; break; // Isaac
+                            case 410: rate = 1f; break; // Nadine
+                            case 411: rate = 0.75f; break; // Sylvia
+                            case 412: rate = 1f; break; // Laurie
+                            case 413: rate = 0.75f; break; // Miguel
+                            case 414: rate = 1f; break; // Harold
+                            case 415: rate = 1.25f; break; // Sherene
+                        }
+                        break;
+
+                    case "LargeWeights":
+                        switch (character.Id)
+                        {
+                            case 100: rate = 1f; break; // Jules
+                            case 101: rate = 1.5f; break; // Derek
+                            case 102: rate = 0.5f; break; // Lloyd
+                            case 103: rate = 1f; break; // Gabriel
+                            case 104: rate = 0.5f; break; // Samir
+                            case 105: rate = 1.5f; break; // Arata
+                            case 200: rate = 1.5f; break; // Sophie
+                            case 201: rate = 0.5f; break; // June
+                            case 202: rate = 1f; break; // Freya
+                            case 203: rate = 1.5f; break; // Maple
+                            case 204: rate = 1f; break; // Kagetsu
+                            case 205: rate = 0.5f; break; // Diana
+                            case 700: // Child
+                            case 701: // Child
+                            case 702: // Child
+                            case 703: rate = 1.5f; break; // Child
+                            case 400: rate = 1.5f; break; // Felix
+                            case 401: rate = 1f; break; // Erik
+                            case 402: rate = 1f; break; // Stuart
+                            case 403: rate = 1f; break; // Sonia
+                            case 404: rate = 1f; break; // Madeleine
+                            case 405: rate = 1f; break; // Mina
+                            case 406: rate = 1f; break; // Wilbur
+                            case 407: rate = 1f; break; // Clara
+                            case 408: rate = 1f; break; // Kevin
+                            case 409: rate = 1f; break; // Isaac
+                            case 410: rate = 1f; break; // Nadine
+                            case 411: rate = 0.5f; break; // Sylvia
+                            case 412: rate = 1f; break; // Laurie
+                            case 413: rate = 0.5f; break; // Miguel
+                            case 414: rate = 1f; break; // Harold
+                            case 415: rate = 1.5f; break; // Sherene
+                        }
+                        break;
                 }
-            }
-            else if (WeightsType.Value == "SmallWeights")
-            {
-                love[0].LikeAbilityRate = 1f; // Jules
-                love[1].LikeAbilityRate = 1.1f; // Derek
-                love[2].LikeAbilityRate = 0.9f; // Lloyd
-                love[3].LikeAbilityRate = 1f; // Gabriel
-                love[4].LikeAbilityRate = 0.9f; // Samir
-                love[5].LikeAbilityRate = 1.1f; // Arata
-                love[6].LikeAbilityRate = 1.1f; // Sophie
-                love[7].LikeAbilityRate = 0.9f; // June
-                love[8].LikeAbilityRate = 1f; // Freya
-                love[9].LikeAbilityRate = 1.1f; // Maple
-                love[10].LikeAbilityRate = 1f; // Kagetsu
-                love[11].LikeAbilityRate = 0.9f; // Diana
-                love[12].LikeAbilityRate = 1.1f; // Child
-                love[13].LikeAbilityRate = 1.1f; // Felix
-                love[14].LikeAbilityRate = 1f; // Erik
-                love[15].LikeAbilityRate = 1f; // Stuart
-                love[16].LikeAbilityRate = 1f; // Sonia
-                love[17].LikeAbilityRate = 1f; // Madeleine
-                love[18].LikeAbilityRate = 1f; // Mina
-                love[19].LikeAbilityRate = 1f; // Wilbur
-                love[20].LikeAbilityRate = 1f; // Clara
-                love[21].LikeAbilityRate = 1f; // Kevin
-                love[22].LikeAbilityRate = 1f; // Isaac
-                love[23].LikeAbilityRate = 1f; // Nadine
-                love[24].LikeAbilityRate = 0.9f; // Sylvia
-                love[25].LikeAbilityRate = 1f; // Laurie
-                love[26].LikeAbilityRate = 0.9f; // Miguel
-                love[27].LikeAbilityRate = 1f; // Harold
-                love[28].LikeAbilityRate = 1.1f; // Sherene
-            }
-            else if (WeightsType.Value == "MediumWeights")
-            {
-                love[0].LikeAbilityRate = 1f; // Jules
-                love[1].LikeAbilityRate = 1.25f; // Derek
-                love[2].LikeAbilityRate = 0.75f; // Lloyd
-                love[3].LikeAbilityRate = 1f; // Gabriel
-                love[4].LikeAbilityRate = 0.75f; // Samir
-                love[5].LikeAbilityRate = 1.25f; // Arata
-                love[6].LikeAbilityRate = 1.25f; // Sophie
-                love[7].LikeAbilityRate = 0.75f; // June
-                love[8].LikeAbilityRate = 1f; // Freya
-                love[9].LikeAbilityRate = 1.25f; // Maple
-                love[10].LikeAbilityRate = 1f; // Kagetsu
-                love[11].LikeAbilityRate = 0.75f; // Diana
-                love[12].LikeAbilityRate = 1.25f; // Child
-                love[13].LikeAbilityRate = 1.25f; // Felix
-                love[14].LikeAbilityRate = 1f; // Erik
-                love[15].LikeAbilityRate = 1f; // Stuart
-                love[16].LikeAbilityRate = 1f; // Sonia
-                love[17].LikeAbilityRate = 1f; // Madeleine
-                love[18].LikeAbilityRate = 1f; // Mina
-                love[19].LikeAbilityRate = 1f; // Wilbur
-                love[20].LikeAbilityRate = 1f; // Clara
-                love[21].LikeAbilityRate = 1f; // Kevin
-                love[22].LikeAbilityRate = 1f; // Isaac
-                love[23].LikeAbilityRate = 1f; // Nadine
-                love[24].LikeAbilityRate = 0.75f; // Sylvia
-                love[25].LikeAbilityRate = 1f; // Laurie
-                love[26].LikeAbilityRate = 0.75f; // Miguel
-                love[27].LikeAbilityRate = 1f; // Harold
-                love[28].LikeAbilityRate = 1.25f; // Sherene
-            }
-            else if (WeightsType.Value == "LargeWeights")
-            {
-                love[0].LikeAbilityRate = 1f; // Jules
-                love[1].LikeAbilityRate = 1.5f; // Derek
-                love[2].LikeAbilityRate = 0.5f; // Lloyd
-                love[3].LikeAbilityRate = 1f; // Gabriel
-                love[4].LikeAbilityRate = 0.5f; // Samir
-                love[5].LikeAbilityRate = 1.5f; // Arata
-                love[6].LikeAbilityRate = 1.5f; // Sophie
-                love[7].LikeAbilityRate = 0.5f; // June
-                love[8].LikeAbilityRate = 1f; // Freya
-                love[9].LikeAbilityRate = 1.5f; // Maple
-                love[10].LikeAbilityRate = 1f; // Kagetsu
-                love[11].LikeAbilityRate = 0.5f; // Diana
-                love[12].LikeAbilityRate = 1.5f; // Child
-                love[13].LikeAbilityRate = 1.5f; // Felix
-                love[14].LikeAbilityRate = 1f; // Erik
-                love[15].LikeAbilityRate = 1f; // Stuart
-                love[16].LikeAbilityRate = 1f; // Sonia
-                love[17].LikeAbilityRate = 1f; // Madeleine
-                love[18].LikeAbilityRate = 1f; // Mina
-                love[19].LikeAbilityRate = 1f; // Wilbur
-                love[20].LikeAbilityRate = 1f; // Clara
-                love[21].LikeAbilityRate = 1f; // Kevin
-                love[22].LikeAbilityRate = 1f; // Isaac
-                love[23].LikeAbilityRate = 1f; // Nadine
-                love[24].LikeAbilityRate = 0.5f; // Sylvia
-                love[25].LikeAbilityRate = 1f; // Laurie
-                love[26].LikeAbilityRate = 0.5f; // Miguel
-                love[27].LikeAbilityRate = 1f; // Harold
-                love[28].LikeAbilityRate = 1.5f; // Sherene
+                character.LikeAbilityRate = rate;
             }
         }
     }
@@ -232,37 +255,48 @@ public class Plugin : BasePlugin
         private static void ApplyWeights()
         {
             if (WeightsType.Value != "Custom") return;
-            
+
             var love = MasterDataManager.Instance.CharacterMaster.list;
-            love[0].LikeAbilityRate = JulesLove.Value;
-            love[1].LikeAbilityRate = DerekLove.Value;
-            love[2].LikeAbilityRate = LloydLove.Value;
-            love[3].LikeAbilityRate = GabrielLove.Value;
-            love[4].LikeAbilityRate = SamirLove.Value;
-            love[5].LikeAbilityRate = ArataLove.Value;
-            love[6].LikeAbilityRate = SophieLove.Value;
-            love[7].LikeAbilityRate = JuneLove.Value;
-            love[8].LikeAbilityRate = FreyaLove.Value;
-            love[9].LikeAbilityRate = MapleLove.Value;
-            love[10].LikeAbilityRate = KagetsuLove.Value;
-            love[11].LikeAbilityRate = DianaLove.Value;
-            love[12].LikeAbilityRate = ChildLove.Value;
-            love[13].LikeAbilityRate = FelixLove.Value;
-            love[14].LikeAbilityRate = ErikLove.Value;
-            love[15].LikeAbilityRate = StuartLove.Value;
-            love[16].LikeAbilityRate = SoniaLove.Value;
-            love[17].LikeAbilityRate = MadeleineLove.Value;
-            love[18].LikeAbilityRate = MinaLove.Value;
-            love[19].LikeAbilityRate = WilburLove.Value;
-            love[20].LikeAbilityRate = ClaraLove.Value;
-            love[21].LikeAbilityRate = KevinLove.Value;
-            love[22].LikeAbilityRate = IsaacLove.Value;
-            love[23].LikeAbilityRate = NadineLove.Value;
-            love[24].LikeAbilityRate = SylviaLove.Value;
-            love[25].LikeAbilityRate = LaurieLove.Value;
-            love[26].LikeAbilityRate = MiguelLove.Value;
-            love[27].LikeAbilityRate = HaroldLove.Value;
-            love[28].LikeAbilityRate = ShereneLove.Value;
+
+            foreach (var character in love)
+            {
+                switch (character.Id)
+                {
+                    case 100: character.LikeAbilityRate = JulesLove.Value; break;
+                    case 101: character.LikeAbilityRate = DerekLove.Value; break;
+                    case 102: character.LikeAbilityRate = LloydLove.Value; break;
+                    case 103: character.LikeAbilityRate = GabrielLove.Value; break;
+                    case 104: character.LikeAbilityRate = SamirLove.Value; break;
+                    case 105: character.LikeAbilityRate = ArataLove.Value; break;
+                    case 200: character.LikeAbilityRate = SophieLove.Value; break;
+                    case 201: character.LikeAbilityRate = JuneLove.Value; break;
+                    case 202: character.LikeAbilityRate = FreyaLove.Value; break;
+                    case 203: character.LikeAbilityRate = MapleLove.Value; break;
+                    case 204: character.LikeAbilityRate = KagetsuLove.Value; break;
+                    case 205: character.LikeAbilityRate = DianaLove.Value; break;
+                    case 700:
+                    case 701:
+                    case 702:
+                    case 703:
+                        character.LikeAbilityRate = ChildLove.Value; break;
+                    case 400: character.LikeAbilityRate = FelixLove.Value; break;
+                    case 401: character.LikeAbilityRate = ErikLove.Value; break;
+                    case 402: character.LikeAbilityRate = StuartLove.Value; break;
+                    case 403: character.LikeAbilityRate = SoniaLove.Value; break;
+                    case 404: character.LikeAbilityRate = MadeleineLove.Value; break;
+                    case 405: character.LikeAbilityRate = MinaLove.Value; break;
+                    case 406: character.LikeAbilityRate = WilburLove.Value; break;
+                    case 407: character.LikeAbilityRate = ClaraLove.Value; break;
+                    case 408: character.LikeAbilityRate = KevinLove.Value; break;
+                    case 409: character.LikeAbilityRate = IsaacLove.Value; break;
+                    case 410: character.LikeAbilityRate = NadineLove.Value; break;
+                    case 411: character.LikeAbilityRate = SylviaLove.Value; break;
+                    case 412: character.LikeAbilityRate = LaurieLove.Value; break;
+                    case 413: character.LikeAbilityRate = MiguelLove.Value; break;
+                    case 414: character.LikeAbilityRate = HaroldLove.Value; break;
+                    case 415: character.LikeAbilityRate = ShereneLove.Value; break;
+                }
+            }
         }
     }
     
